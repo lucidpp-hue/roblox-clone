@@ -6,13 +6,13 @@ export async function POST(request, { params }) {
   try {
     const cookieStore = await cookies();
     const authToken = cookieStore.get('authToken')?.value;
-    const { gameId } = params;
+    const { id } = params;
 
     if (!authToken) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const game = await prisma.game.findUnique({ where: { id: gameId } });
+    const game = await prisma.game.findUnique({ where: { id } });
 
     if (!game || game.userId !== authToken) {
       return NextResponse.json(
@@ -32,7 +32,7 @@ export async function POST(request, { params }) {
 
     const gamepass = await prisma.gamePass.create({
       data: {
-        gameId,
+        gameId: id,
         name,
         price: price || 100,
       },
@@ -40,7 +40,7 @@ export async function POST(request, { params }) {
 
     // Increment gamepass count
     await prisma.game.update({
-      where: { id: gameId },
+      where: { id },
       data: { gamePassCount: { increment: 1 } },
     });
 
