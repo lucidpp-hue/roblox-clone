@@ -1,9 +1,10 @@
 import { NextResponse } from 'next/server';
-import prisma from '@/lib/prisma';
 import { hashPassword } from '@/lib/auth';
 
 export async function POST(request) {
   try {
+    // Dynamically import Prisma to ensure it's initialized
+    const prisma = (await import('@/lib/prisma')).default;
     const { username, email, password } = await request.json();
 
     // Validate input
@@ -55,7 +56,7 @@ export async function POST(request) {
 
     return response;
   } catch (error) {
-    console.error('Signup error:', error);
+    console.error('[v0] Signup error:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
