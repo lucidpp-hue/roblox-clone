@@ -1,0 +1,146 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                String    @id @default(cuid())
+  username          String    @unique
+  email             String    @unique
+  password          String
+  followers         Int       @default(0)
+  isVerified        Boolean   @default(false)
+  profileBio        String    @default("")
+  logoUrl           String?
+  bannerUrl         String?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  
+  games             Game[]
+  groups            Group[]
+  groupMembers      GroupMember[]
+  analytics         GameAnalytics[]
+  advertisements    Advertisement[]
+  
+  @@index([username])
+}
+
+model Game {
+  id                String    @id @default(cuid())
+  userId            String
+  user              User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  title             String
+  description       String    @default("")
+  thumbnailUrl      String?
+  
+  activeUsers       Int       @default(0)
+  totalVisits       Int       @default(0)
+  
+  gamePassCount     Int       @default(0)
+  
+  groupId           String?
+  group             Group?    @relation(fields: [groupId], references: [id], onDelete: SetNull)
+  
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  lastTitleUpdateAt DateTime?
+  
+  analytics         GameAnalytics[]
+  gamePasses        GamePass[]
+  advertisements    Advertisement[]
+  
+  @@index([userId])
+  @@index([groupId])
+}
+
+model GameAnalytics {
+  id                String    @id @default(cuid())
+  gameId            String
+  game              Game      @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  
+  userId            String
+  user              User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  date              DateTime
+  activeUsers       Int
+  visits            Int
+  
+  createdAt         DateTime  @default(now())
+  
+  @@unique([gameId, userId, date])
+  @@index([gameId])
+  @@index([userId])
+}
+
+model Group {
+  id                String    @id @default(cuid())
+  userId            String
+  user              User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  name              String
+  description       String    @default("")
+  iconUrl           String?
+  
+  memberCount       Int       @default(0)
+  
+  games             Game[]
+  members           GroupMember[]
+  
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  
+  @@index([userId])
+}
+
+model GroupMember {
+  id                String    @id @default(cuid())
+  groupId           String
+  group             Group     @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  
+  userId            String
+  user              User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  joinedAt          DateTime  @default(now())
+  
+  @@unique([groupId, userId])
+  @@index([groupId])
+  @@index([userId])
+}
+
+model GamePass {
+  id                String    @id @default(cuid())
+  gameId            String
+  game              Game      @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  
+  name              String
+  price             Int       @default(100)
+  
+  createdAt         DateTime  @default(now())
+  
+  @@index([gameId])
+}
+
+model Advertisement {
+  id                String    @id @default(cuid())
+  gameId            String
+  game              Game      @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  
+  userId            String
+  user              User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  boost             Int       @default(500)
+  usedAt            DateTime  @default(now())
+  
+  createdAt         DateTime  @default(now())
+  
+  @@unique([gameId])
+  @@index([gameId])
+}
