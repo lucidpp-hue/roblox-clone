@@ -7,10 +7,6 @@ const nextConfig = {
         hostname: 'images.rbxcdn.com'
       }
     ]
-  },
-  devIndicators: {
-    buildActivity: true,
-    buildActivityPosition: 'bottom-right'
   }
 };
 
