@@ -8,7 +8,9 @@ const nextConfig = {
       }
     ]
   },
-  devIndicators: {}
+  devIndicators: {
+    buildActivity: 'dashboard'
+  }
 };
 
 export default nextConfig;
