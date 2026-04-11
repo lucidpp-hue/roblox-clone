@@ -7,7 +7,8 @@ const nextConfig = {
         hostname: 'images.rbxcdn.com'
       }
     ]
-  }
+  },
+  devIndicators: {}
 };
 
 export default nextConfig;
