@@ -45,6 +45,14 @@ export default function Sidebar() {
             <div className="icon-spritesheet icon-nav-groups mr-2" />
             Groups
           </SidebarItem>
+          <SidebarItem href="/developer/dashboard">
+            <div className="icon-spritesheet icon-nav-groups mr-2" />
+            Dev Dashboard
+          </SidebarItem>
+          <SidebarItem href="/groups">
+            <div className="icon-spritesheet icon-nav-groups mr-2" />
+            Community Groups
+          </SidebarItem>
           <SidebarItem href="/blog">
             <div className="icon-spritesheet icon-nav-blog mr-2" />
             Blog
